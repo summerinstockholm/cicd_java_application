@@ -7,7 +7,7 @@ pipeline{
         NEXUS_USER = credentials('nexus-user')
         NEXUS_PASSWORD = credentials('nexus-password')
         NEXUS_REPOSITORY_ADDRESS = '158.160.84.218:8083'
-        VERSION = '${env.BUILD_NUMBER}'
+        VERSION = "${env.BUILD_ID}"
     }
     stages{
         stage("Sonar quality check"){
