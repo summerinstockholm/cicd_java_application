@@ -37,7 +37,7 @@ pipeline{
                 }
             }
         }
-        stage ("Docker build and docker push"){
+        stage ("Docker build, login, push and logout"){
             steps{
                 script{
                     sh '''
