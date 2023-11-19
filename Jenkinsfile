@@ -3,6 +3,11 @@ pipeline{
     parameters {
         booleanParam(name: 'skip_sonar', defaultValue: false, description: "Установите в true для того чтобы пропустить проверки сонара (они сейчас не работают)")
     }
+    environment {
+        NEXUS_USER = credentials('nexus-user')
+        NEXUS_PASSWORD = credentials('nexus-password')
+        NEXUS_REPOSITORY_ADDRESS = '158.160.84.218:8083'
+    }
     stages{
         stage("Sonar quality check"){
             when { 
@@ -31,6 +36,18 @@ pipeline{
                 }
             }
         }
+        stage("Docker login"){
+            steps{
+                echo "Docker login step"
+                script{
+                    sh 'echo $NEXUS_PASSWORD | docker login $NEXUS_REPOSITORY_ADDRESS -u $NEXUS_LOGIN --password-stdin'
+                    echo 'Login completed'
+                    sh 'docker logout'
+                    echo 'Logout completed'                
+                }
+            }
+        }
+
     }
 
 }
