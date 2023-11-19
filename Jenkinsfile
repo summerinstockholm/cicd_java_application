@@ -40,7 +40,7 @@ pipeline{
             steps{
                 echo "Docker login step"
                 script{
-                    sh 'docker login $NEXUS_REPOSITORY_ADDRESS -u $NEXUS_USER -p $NEXUS_PASSWORD'
+                    sh 'echo $NEXUS_PASSWORD | docker login $NEXUS_REPOSITORY_ADDRESS -u $NEXUS_USER --password-stdin'
                     echo 'Login completed'
                     sh 'docker logout'
                     echo 'Logout completed'                
