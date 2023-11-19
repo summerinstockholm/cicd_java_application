@@ -1,10 +1,18 @@
 pipeline{
     agent any
+    parameters {
+        booleanParam(name: 'skip_sonar', defaultValue: false, description: "Установите в true для того чтобы пропустить проверки сонара (они сейчас не работают)")
+    }
     stages{
         stage("Sonar quality check"){
+            when { 
+                expression {
+                    params.skip_sonar != true }
+                }
+        
             agent {
                 docker {
-                    image 'openjdk:8'
+                    image 'openjdk:11'
                 }
             }
             steps{
@@ -12,7 +20,7 @@ pipeline{
                 script{
                     withSonarQubeEnv(credentialsId: 'sonar-token') {
                         sh 'chmod +x gradlew'
-                        sh './gradlew sonarqube Dsonar.userHome=`pwd`/.sonar --stacktrace --warning-mode all'
+                        sh './gradlew sonarqube --stacktrace --warning-mode all'
                     }                
                 }
             }
