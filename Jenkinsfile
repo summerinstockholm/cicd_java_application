@@ -7,6 +7,7 @@ pipeline{
         NEXUS_USER = credentials('nexus-user')
         NEXUS_PASSWORD = credentials('nexus-password')
         NEXUS_REPOSITORY_ADDRESS = '158.160.84.218:8083'
+        VERSION = '${env.BUILD_NUMBER}'
     }
     stages{
         stage("Sonar quality check"){
@@ -36,18 +37,19 @@ pipeline{
                 }
             }
         }
-        stage("Docker login"){
+        stage ("Docker build and docker push"){
             steps{
-                echo "Docker login step"
                 script{
-                    sh 'echo $NEXUS_PASSWORD | docker login $NEXUS_REPOSITORY_ADDRESS -u $NEXUS_USER --password-stdin'
-                    echo 'Login completed'
-                    sh 'docker logout'
-                    echo 'Logout completed'                
+                    sh '''
+                    docker build -t ${NEXUS_REPOSITORY_ADDRESS}/springapp:${VERSION} .
+                    echo ${NEXUS_PASSWORD} | docker login ${NEXUS_REPOSITORY_ADDRESS} -u ${NEXUS_USER} --password-stdin
+                    docker push ${NEXUS_REPOSITORY_ADDRESS}/springapp:${VERSION}
+                    docker rmi ${NEXUS_REPOSITORY_ADDRESS}/springapp:${VERSION}
+                    docker logout
+                    '''
                 }
             }
         }
-
     }
 
 }
