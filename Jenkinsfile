@@ -9,7 +9,7 @@ pipeline{
                 expression {
                     params.skip_sonar != true }
                 }
-        
+                echo "Sonar quality check were skipped"
             agent {
                 docker {
                     image 'openjdk:11'
